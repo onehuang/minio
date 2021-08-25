@@ -289,6 +289,7 @@ func GetAllSets(args ...string) ([][]string, error) {
 	}
 
 	var setArgs [][]string
+	// 包含{...}   http://host{1...32}/export{1...32}
 	if !ellipses.HasEllipses(args...) {
 		var setIndexes [][]uint64
 		// Check if we have more one args.
@@ -339,6 +340,7 @@ var (
 
 // CreateServerEndpoints - validates and creates new endpoints from input args, supports
 // both ellipses and without ellipses transparently.
+// 创建endpoint(setCount, DrivesPerSet, Endpoints)
 func createServerEndpoints(serverAddr string, args ...string) (
 	endpointServerPools EndpointServerPools, setupType SetupType, err error) {
 

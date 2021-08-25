@@ -124,9 +124,11 @@ var globalCLIContext = struct {
 
 var (
 	// Indicates if the running minio server is distributed setup.
+	// 分布式擦除码模式
 	globalIsDistErasure = false
 
 	// Indicates if the running minio server is an erasure-code backend.
+	// 擦除码模式
 	globalIsErasure = false
 
 	// Indicates if the running minio is in gateway mode.
@@ -211,6 +213,7 @@ var (
 	// registered listeners
 	globalConsoleSys *HTTPConsoleLoggerSys
 
+	// endpoint 池
 	globalEndpoints EndpointServerPools
 
 	// The name of this local node, fetched from arguments
@@ -219,6 +222,7 @@ var (
 	// The global subnet license
 	globalSubnetLicense string
 
+	// 远程的endpoint map <host, endpoint>
 	globalRemoteEndpoints map[string]Endpoint
 
 	// Global server's network statistics
@@ -301,6 +305,7 @@ var (
 	// If writes to FS backend should be O_SYNC.
 	globalFSOSync bool
 
+	// endpoint 代理
 	globalProxyEndpoints []ProxyEndpoint
 
 	globalInternodeTransport http.RoundTripper
