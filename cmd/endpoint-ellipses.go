@@ -277,6 +277,7 @@ func parseEndpointSet(customSetDriveCount uint64, args ...string) (ep endpointSe
 // specific set size.
 // For example: {1...64} is divided into 4 sets each of size 16.
 // This applies to even distributed setup syntax as well.
+// TODO 根据特定大小集合分配断点列表
 func GetAllSets(args ...string) ([][]string, error) {
 	var customSetDriveCount uint64
 	if v := env.Get(EnvErasureSetDriveCount, ""); v != "" {

@@ -51,6 +51,7 @@ func (z *erasureServerPools) SinglePool() bool {
 	return len(z.serverPools) == 1
 }
 
+// 一个pool的set数
 // Initialize new pool of erasure sets.
 func newErasureServerPools(ctx context.Context, endpointServerPools EndpointServerPools) (ObjectLayer, error) {
 	var (

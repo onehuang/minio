@@ -200,8 +200,8 @@ func NewEndpoint(arg string) (ep Endpoint, e error) {
 // PoolEndpoints represent endpoints in a given pool
 // along with its setCount and setDriveCount.
 type PoolEndpoints struct {
-	SetCount     int
-	DrivesPerSet int
+	SetCount     int  // set 数
+	DrivesPerSet int  // 每set中drives
 	Endpoints    Endpoints
 }
 

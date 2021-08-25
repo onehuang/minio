@@ -128,14 +128,17 @@ func serverHandleCmdArgs(ctx *cli.Context) {
 	var err error
 	var setupType SetupType
 
+	// 安全
 	// Check and load TLS certificates.
 	globalPublicCerts, globalTLSCerts, globalIsTLS, err = getTLSConfig()
 	logger.FatalIf(err, "Unable to load the TLS configuration")
 
+	// ca证书
 	// Check and load Root CAs.
 	globalRootCAs, err = certs.GetRootCAs(globalCertsCADir.Get())
 	logger.FatalIf(err, "Failed to read root CAs (%v)", err)
 
+	// crts 签名证书
 	// Add the global public crts as part of global root CAs
 	for _, publicCrt := range globalPublicCerts {
 		globalRootCAs.AddCert(publicCrt)
@@ -144,6 +147,7 @@ func serverHandleCmdArgs(ctx *cli.Context) {
 	// Register root CAs for remote ENVs
 	env.RegisterGlobalCAs(globalRootCAs)
 
+	// 所有的endpoint信息
 	globalEndpoints, setupType, err = createServerEndpoints(globalMinioAddr, serverCmdArgs(ctx)...)
 	logger.FatalIf(err, "Invalid command line arguments")
 
@@ -429,8 +433,10 @@ func (lw nullWriter) Write(b []byte) (int, error) {
 func serverMain(ctx *cli.Context) {
 	defer globalDNSCache.Stop()
 
+	// 监听中断信号
 	signal.Notify(globalOSSignalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
 
+	// 处理退出信号
 	go handleSignals()
 
 	setDefaultProfilerRates()
@@ -440,10 +446,14 @@ func serverMain(ctx *cli.Context) {
 	logger.AddTarget(globalConsoleSys)
 
 	// Perform any self-tests
+	// 自检查checksum算法
 	bitrotSelfTest()
+	// 自检擦除算法
 	erasureSelfTest()
+	// 自检压缩算法
 	compressSelfTest()
 
+	// 配置信息
 	// Handle all server command args.
 	serverHandleCmdArgs(ctx)
 
@@ -507,6 +517,7 @@ func serverMain(ctx *cli.Context) {
 	if globalIsDistErasure && globalEndpoints.FirstLocal() {
 		for {
 			// Additionally in distributed setup, validate the setup and configuration.
+			// 验证所有所有endpoint服务是否正常
 			err := verifyServerSystemConfig(GlobalContext, globalEndpoints)
 			if err == nil || errors.Is(err, context.Canceled) {
 				break
@@ -520,6 +531,7 @@ func serverMain(ctx *cli.Context) {
 		}
 	}
 
+	// 具体的操作层
 	newObject, err := newObjectLayer(GlobalContext, globalEndpoints)
 	if err != nil {
 		logFatalErrs(err, Endpoint{}, true)
@@ -551,6 +563,7 @@ func serverMain(ctx *cli.Context) {
 	}
 
 	// Initialize users credentials and policies in background right after config has initialized.
+	// 初始化凭证和策略
 	go globalIAMSys.Init(GlobalContext, newObject)
 
 	initDataScanner(GlobalContext, newObject)
@@ -606,5 +619,6 @@ func newObjectLayer(ctx context.Context, endpointServerPools EndpointServerPools
 		return NewFSObjectLayer(endpointServerPools[0].Endpoints[0].Path)
 	}
 
+	// 擦除服务池 pool 节点 set 集合 drives 磁盘
 	return newErasureServerPools(ctx, endpointServerPools)
 }

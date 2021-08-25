@@ -268,6 +268,7 @@ func initAutoHeal(ctx context.Context, objAPI ObjectLayer) {
 
 		// Heal any disk format and metadata early, if possible.
 		// Start with format healing
+		// 修复磁盘格式
 		if err := bgSeq.healDiskFormat(); err != nil {
 			if newObjectLayerFn() != nil {
 				// log only in situations, when object layer
@@ -277,6 +278,7 @@ func initAutoHeal(ctx context.Context, objAPI ObjectLayer) {
 		}
 	}
 
+	// 修复磁盘数据
 	if err := bgSeq.healDiskMeta(objAPI); err != nil {
 		if newObjectLayerFn() != nil {
 			// log only in situations, when object layer
