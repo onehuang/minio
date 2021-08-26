@@ -38,6 +38,7 @@ import (
 	"github.com/minio/pkg/wildcard"
 )
 
+// 集群处理
 type erasureServerPools struct {
 	GatewayUnsupported
 
@@ -53,6 +54,7 @@ func (z *erasureServerPools) SinglePool() bool {
 
 // 一个pool的set数
 // Initialize new pool of erasure sets.
+// 多endpoint处理
 func newErasureServerPools(ctx context.Context, endpointServerPools EndpointServerPools) (ObjectLayer, error) {
 	var (
 		deploymentID       string

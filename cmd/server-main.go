@@ -492,6 +492,7 @@ func serverMain(ctx *cli.Context) {
 	setMaxResources()
 
 	// Configure server.
+	// 配置服务
 	handler, err := configureServerHandler(globalEndpoints)
 	if err != nil {
 		logger.Fatal(config.ErrUnexpectedError(err), "Unable to configure one of server's RPC services")

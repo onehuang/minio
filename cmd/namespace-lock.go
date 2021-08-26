@@ -234,6 +234,7 @@ func (n *nsLockMap) NewNSLock(lockers func() ([]dsync.NetLocker, string), volume
 }
 
 // Lock - block until write lock is taken or timeout has occurred.
+// 本地锁
 func (li *localLockInstance) GetLock(ctx context.Context, timeout *dynamicTimeout) (_ LockContext, timedOutErr error) {
 	lockSource := getSource(2)
 	start := UTCNow()
@@ -301,6 +302,10 @@ func (li *localLockInstance) RUnlock(cancel context.CancelFunc) {
 
 func getSource(n int) string {
 	var funcName string
+	// pc是uintptr这个返回的是函数指针
+	// filename是函数所在文件名目录
+	// lineNum所在行号
+	// ok 是否可以获取到信息
 	pc, filename, lineNum, ok := runtime.Caller(n)
 	if ok {
 		filename = pathutil.Base(filename)

@@ -901,6 +901,7 @@ func getDefaultParityBlocks(drive int) int {
 
 // ecDrivesNoConfig returns the erasure coded drives in a set if no config has been set.
 // It will attempt to read it from env variable and fall back to drives/2.
+// 磁盘编号配置
 func ecDrivesNoConfig(setDriveCount int) int {
 	sc, _ := storageclass.LookupConfig(config.KVS{}, setDriveCount)
 	ecDrives := sc.GetParityForSC(storageclass.STANDARD)

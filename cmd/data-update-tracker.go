@@ -498,6 +498,7 @@ func (d *dataUpdateTracker) startCollector(ctx context.Context) {
 }
 
 // markDirty adds the supplied path to the current bloom filter.
+// 提供的路径添加到布隆滤器
 func (d *dataUpdateTracker) markDirty(bucket, prefix string) {
 	dateUpdateTrackerLogPrefix := color.Green("dataUpdateTracker:")
 	if bucket == "" && d.debug {

@@ -234,6 +234,7 @@ func registerAPIRouter(router *mux.Router) {
 			HandlerFunc(collectAPIStats("copyobjectpart", maxClients(gz(httpTraceAll(api.CopyObjectPartHandler))))).
 			Queries("partNumber", "{partNumber:[0-9]+}", "uploadId", "{uploadId:.*}")
 		// PutObjectPart
+		// 上传文件
 		router.Methods(http.MethodPut).Path("/{object:.+}").HandlerFunc(
 			collectAPIStats("putobjectpart", maxClients(gz(httpTraceHdrs(api.PutObjectPartHandler))))).Queries("partNumber", "{partNumber:[0-9]+}", "uploadId", "{uploadId:.*}")
 		// ListObjectParts
@@ -243,6 +244,7 @@ func registerAPIRouter(router *mux.Router) {
 		router.Methods(http.MethodPost).Path("/{object:.+}").HandlerFunc(
 			collectAPIStats("completemutipartupload", maxClients(gz(httpTraceAll(api.CompleteMultipartUploadHandler))))).Queries("uploadId", "{uploadId:.*}")
 		// NewMultipartUpload
+		// 客户端获取uploadId
 		router.Methods(http.MethodPost).Path("/{object:.+}").HandlerFunc(
 			collectAPIStats("newmultipartupload", maxClients(gz(httpTraceAll(api.NewMultipartUploadHandler))))).Queries("uploads", "")
 		// AbortMultipartUpload

@@ -2490,6 +2490,7 @@ func (api objectAPIHandlers) CopyObjectPartHandler(w http.ResponseWriter, r *htt
 }
 
 // PutObjectPartHandler - uploads an incoming part for an ongoing multipart operation.
+// 分片上传
 func (api objectAPIHandlers) PutObjectPartHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := newContext(r, w, "PutObjectPart")
 

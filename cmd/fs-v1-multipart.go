@@ -212,6 +212,7 @@ func (fs *FSObjects) ListMultipartUploads(ctx context.Context, bucket, object, k
 // subsequent request each UUID is unique.
 //
 // Implements S3 compatible initiate multipart API.
+// 客户端获取uploadId
 func (fs *FSObjects) NewMultipartUpload(ctx context.Context, bucket, object string, opts ObjectOptions) (string, error) {
 	if err := checkNewMultipartArgs(ctx, bucket, object, fs); err != nil {
 		return "", toObjectErr(err, bucket)
@@ -313,6 +314,7 @@ func (fs *FSObjects) PutObjectPart(ctx context.Context, bucket, object, uploadID
 		return pi, toObjectErr(err, bucket, object)
 	}
 
+	// 临时文件
 	tmpPartPath := pathJoin(fs.fsPath, minioMetaTmpBucket, fs.fsUUID, uploadID+"."+mustGetUUID()+"."+strconv.Itoa(partID))
 	bytesWritten, err := fsCreateFile(ctx, tmpPartPath, data, data.Size())
 
