@@ -192,6 +192,7 @@ func initFormatFS(ctx context.Context, fsPath string) (rlk *lock.RLockedFile, er
 	fsFormatPath := pathJoin(fsPath, minioMetaBucket, formatConfigFile)
 
 	// Add a deployment ID, if it does not exist.
+	// format.josn增加一个id, 如果存在不处理
 	if err := formatFSFixDeploymentID(ctx, fsFormatPath); err != nil {
 		return nil, err
 	}
@@ -236,6 +237,7 @@ func initFormatFS(ctx context.Context, fsPath string) (rlk *lock.RLockedFile, er
 			return nil, err
 		}
 
+		// 获取format字段
 		formatBackend, err := formatMetaGetFormatBackendFS(rlk)
 		if err != nil {
 			return nil, err
@@ -243,6 +245,7 @@ func initFormatFS(ctx context.Context, fsPath string) (rlk *lock.RLockedFile, er
 		if formatBackend != formatBackendFS {
 			return nil, fmt.Errorf(`%s file: expected format-type: %s, found: %s`, formatConfigFile, formatBackendFS, formatBackend)
 		}
+		// 读取版本信息
 		version, err := formatFSGetVersion(rlk)
 		if err != nil {
 			return nil, err
@@ -272,6 +275,7 @@ func initFormatFS(ctx context.Context, fsPath string) (rlk *lock.RLockedFile, er
 			continue
 		}
 		var id string
+		// 获取id
 		if id, err = formatFSGetDeploymentID(rlk); err != nil {
 			rlk.Close()
 			return nil, err

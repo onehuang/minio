@@ -360,11 +360,14 @@ func (b *BucketMetadata) Save(ctx context.Context, api ObjectLayer) error {
 	binary.LittleEndian.PutUint16(data[2:4], bucketMetadataVersion)
 
 	// Marshal the bucket metadata
+	// 二进制的形式存放
 	data, err := b.MarshalMsg(data)
 	if err != nil {
 		return err
 	}
 
+	// buckets.metadata.bin
+	// buckets存放路径 {fsPath}/.minio.sys/buckets/{bucketName}/.metadata.bin
 	configFile := path.Join(bucketConfigPrefix, b.Name, bucketMetadataFile)
 	return saveConfig(ctx, api, configFile, data)
 }

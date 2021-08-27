@@ -53,6 +53,7 @@ import (
 var defaultEtag = "00000000000000000000000000000000-1"
 
 // FSObjects - Implements fs object layer.
+// 仅磁盘
 type FSObjects struct {
 	GatewayUnsupported
 
@@ -98,21 +99,26 @@ func initMetaVolumeFS(fsPath, fsUUID string) error {
 	// is the only place where it can be made less expensive
 	// optimizing all other calls. Create minio meta volume,
 	// if it doesn't exist yet.
+
+	// {fsPath}/.minio.sys
 	metaBucketPath := pathJoin(fsPath, minioMetaBucket)
 
 	if err := os.MkdirAll(metaBucketPath, 0777); err != nil {
 		return err
 	}
 
+	// {fsPath}/.minio.sys/tmp
 	metaTmpPath := pathJoin(fsPath, minioMetaTmpBucket, fsUUID)
 	if err := os.MkdirAll(metaTmpPath, 0777); err != nil {
 		return err
 	}
 
+	// {fsPath}/.minio.sys/buckets
 	if err := os.MkdirAll(pathJoin(fsPath, dataUsageBucket), 0777); err != nil {
 		return err
 	}
 
+	// {fsPath}/.minio.sys/multipart
 	metaMultipartPath := pathJoin(fsPath, minioMetaMultipartBucket)
 	return os.MkdirAll(metaMultipartPath, 0777)
 
@@ -126,6 +132,7 @@ func NewFSObjectLayer(fsPath string) (ObjectLayer, error) {
 	}
 
 	var err error
+	// 绝对路径
 	if fsPath, err = getValidPath(fsPath); err != nil {
 		if err == errMinDiskSize {
 			return nil, config.ErrUnableToWriteInBackend(err).Hint(err.Error())
@@ -144,14 +151,17 @@ func NewFSObjectLayer(fsPath string) (ObjectLayer, error) {
 
 	// Assign a new UUID for FS minio mode. Each server instance
 	// gets its own UUID for temporary file transaction.
+	// 每个服务实例一个唯一值
 	fsUUID := mustGetUUID()
 
 	// Initialize meta volume, if volume already exists ignores it.
+	// 初始化元数据地址
 	if err = initMetaVolumeFS(fsPath, fsUUID); err != nil {
 		return nil, err
 	}
 
 	// Initialize `format.json`, this function also returns.
+	// 初始化format.json文件，返回文件信息，存在则不创建， 多个实例共用一个
 	rlk, err := initFormatFS(ctx, fsPath)
 	if err != nil {
 		return nil, err
@@ -160,15 +170,15 @@ func NewFSObjectLayer(fsPath string) (ObjectLayer, error) {
 	// Initialize fs objects.
 	fs := &FSObjects{
 		fsPath:       fsPath,
-		metaJSONFile: fsMetaJSONFile,
-		fsUUID:       fsUUID,
-		rwPool: &fsIOPool{
+		metaJSONFile: fsMetaJSONFile, // fs.json  元数据json文件
+		fsUUID:       fsUUID, // 实例的唯一id
+		rwPool: &fsIOPool{  // 读写文件池
 			readersMap: make(map[string]*lock.RLockedFile),
 		},
-		nsMutex:       newNSLock(false),
+		nsMutex:       newNSLock(false), // 单磁盘互斥锁
 		listPool:      NewTreeWalkPool(globalLookupTimeout),
 		appendFileMap: make(map[string]*fsAppendFile),
-		diskMount:     mountinfo.IsLikelyMountPoint(fsPath),
+		diskMount:     mountinfo.IsLikelyMountPoint(fsPath), // 是否磁盘挂在点
 	}
 
 	// Once the filesystem has initialized hold the read lock for
@@ -178,6 +188,7 @@ func NewFSObjectLayer(fsPath string) (ObjectLayer, error) {
 	fs.fsFormatRlk = rlk
 
 	go fs.cleanupStaleUploads(ctx, GlobalStaleUploadsCleanupInterval, GlobalStaleUploadsExpiry)
+	// TODO 启动收集器 存在的bucket放入布隆过滤器等操作
 	go intDataUpdateTracker.start(ctx, fsPath)
 
 	// Return successfully initialized object layer.

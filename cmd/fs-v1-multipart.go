@@ -847,6 +847,7 @@ func (fs *FSObjects) AbortMultipartUpload(ctx context.Context, bucket, object, u
 // Removes multipart uploads if any older than `expiry` duration
 // on all buckets for every `cleanupInterval`, this function is
 // blocking and should be run in a go-routine.
+// 删除过期文件
 func (fs *FSObjects) cleanupStaleUploads(ctx context.Context, cleanupInterval, expiry time.Duration) {
 	timer := time.NewTimer(cleanupInterval)
 	defer timer.Stop()
