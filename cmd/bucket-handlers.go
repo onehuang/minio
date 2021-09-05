@@ -693,6 +693,7 @@ func (api objectAPIHandlers) PutBucketHandler(w http.ResponseWriter, r *http.Req
 		objectLockEnabled = v == "true"
 	}
 
+	// 权限判断
 	if s3Error := checkRequestAuthType(ctx, r, policy.CreateBucketAction, bucket, ""); s3Error != ErrNone {
 		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(s3Error), r.URL)
 		return
@@ -717,6 +718,7 @@ func (api objectAPIHandlers) PutBucketHandler(w http.ResponseWriter, r *http.Req
 		LockEnabled: objectLockEnabled,
 	}
 
+	// DNS配置
 	if globalDNSConfig != nil {
 		sr, err := globalDNSConfig.Get(bucket)
 		if err != nil {

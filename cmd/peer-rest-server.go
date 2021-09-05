@@ -916,6 +916,7 @@ func (s *peerRESTServer) ListenHandler(w http.ResponseWriter, r *http.Request) {
 	// Use buffered channel to take care of burst sends or slow w.Write()
 	ch := make(chan interface{}, 2000)
 
+	// 订阅事件
 	globalHTTPListen.Subscribe(ch, doneCh, func(evI interface{}) bool {
 		ev, ok := evI.(event.Event)
 		if !ok {

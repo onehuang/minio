@@ -949,6 +949,7 @@ func (a adminAPIHandlers) DeleteServiceAccount(w http.ResponseWriter, r *http.Re
 }
 
 // AccountInfoHandler returns usage
+// 桶的查看api完成
 func (a adminAPIHandlers) AccountInfoHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := newContext(r, w, "AccountInfo")
 
@@ -1006,6 +1007,7 @@ func (a adminAPIHandlers) AccountInfoHandler(w http.ResponseWriter, r *http.Requ
 		return rd, wr
 	}
 
+	// 数据使用情况
 	var dataUsageInfo madmin.DataUsageInfo
 	var err error
 	if !globalIsGateway {

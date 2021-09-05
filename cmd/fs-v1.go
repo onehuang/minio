@@ -456,10 +456,12 @@ func (fs *FSObjects) MakeBucketWithLocation(ctx context.Context, bucket string, 
 		return toObjectErr(err, bucket)
 	}
 
+	// 桶存放路径
 	if err = fsMkdir(ctx, bucketDir); err != nil {
 		return toObjectErr(err, bucket)
 	}
 
+	// 桶元数据存放路径
 	meta := newBucketMetadata(bucket)
 	if err := meta.Save(ctx, fs); err != nil {
 		return toObjectErr(err, bucket)
@@ -534,6 +536,7 @@ func (fs *FSObjects) GetBucketInfo(ctx context.Context, bucket string) (bi Bucke
 }
 
 // ListBuckets - list all s3 compatible buckets (directories) at fsPath.
+// 查看桶列表
 func (fs *FSObjects) ListBuckets(ctx context.Context) ([]BucketInfo, error) {
 	if err := checkPathLength(fs.fsPath); err != nil {
 		logger.LogIf(ctx, err)
@@ -590,6 +593,7 @@ func (fs *FSObjects) ListBuckets(ctx context.Context) ([]BucketInfo, error) {
 
 // DeleteBucket - delete a bucket and all the metadata associated
 // with the bucket including pending multipart, object metadata.
+// 删除桶
 func (fs *FSObjects) DeleteBucket(ctx context.Context, bucket string, forceDelete bool) error {
 	defer NSUpdated(bucket, slashSeparator)
 
@@ -663,6 +667,7 @@ func (fs *FSObjects) CopyObject(ctx context.Context, srcBucket, srcObject, dstBu
 		atomic.AddInt64(&fs.activeIOCount, -1)
 	}()
 
+	// 源路径是否存在
 	if _, err := fs.statBucketDir(ctx, srcBucket); err != nil {
 		return oi, toObjectErr(err, srcBucket)
 	}

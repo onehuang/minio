@@ -241,6 +241,7 @@ func registerAPIRouter(router *mux.Router) {
 		router.Methods(http.MethodGet).Path("/{object:.+}").HandlerFunc(
 			collectAPIStats("listobjectparts", maxClients(gz(httpTraceAll(api.ListObjectPartsHandler))))).Queries("uploadId", "{uploadId:.*}")
 		// CompleteMultipartUpload
+		// 上传完成接口
 		router.Methods(http.MethodPost).Path("/{object:.+}").HandlerFunc(
 			collectAPIStats("completemutipartupload", maxClients(gz(httpTraceAll(api.CompleteMultipartUploadHandler))))).Queries("uploadId", "{uploadId:.*}")
 		// NewMultipartUpload
@@ -409,6 +410,7 @@ func registerAPIRouter(router *mux.Router) {
 		router.Methods(http.MethodPut).HandlerFunc(
 			collectAPIStats("resetbucketreplicationstate", maxClients(gz(httpTraceAll(api.ResetBucketReplicationStateHandler))))).Queries("replication-reset", "")
 		// PutBucket
+		// 创建桶
 		router.Methods(http.MethodPut).HandlerFunc(
 			collectAPIStats("putbucket", maxClients(gz(httpTraceAll(api.PutBucketHandler)))))
 		// HeadBucket

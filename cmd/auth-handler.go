@@ -87,6 +87,8 @@ func isRequestSignStreamingV4(r *http.Request) bool {
 // Authorization type.
 type authType int
 
+
+// 支持的所有认证类型
 // List of all supported auth types.
 const (
 	authTypeUnknown authType = iota

@@ -53,7 +53,7 @@ type NotificationSys struct {
 	targetResCh                chan event.TargetIDResult
 	bucketRulesMap             map[string]event.RulesMap
 	bucketRemoteTargetRulesMap map[string]map[event.TargetID]event.RulesMap
-	peerClients                []*peerRESTClient // Excludes self
+	peerClients                []*peerRESTClient // Excludes self   // 客户端
 	allPeerClients             []*peerRESTClient // Includes nil client for self
 }
 
@@ -535,6 +535,7 @@ func (sys *NotificationSys) GetLocks(ctx context.Context, r *http.Request) []*Pe
 }
 
 // LoadBucketMetadata - calls LoadBucketMetadata call on all peers
+// 所有客户端加载桶元数据
 func (sys *NotificationSys) LoadBucketMetadata(ctx context.Context, bucketName string) {
 	ng := WithNPeers(len(sys.peerClients))
 	for idx, client := range sys.peerClients {

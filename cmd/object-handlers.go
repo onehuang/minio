@@ -2490,7 +2490,7 @@ func (api objectAPIHandlers) CopyObjectPartHandler(w http.ResponseWriter, r *htt
 }
 
 // PutObjectPartHandler - uploads an incoming part for an ongoing multipart operation.
-// 分片上传
+// 分片上传处理
 func (api objectAPIHandlers) PutObjectPartHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := newContext(r, w, "PutObjectPart")
 
@@ -2929,6 +2929,7 @@ func sendWhiteSpace(w http.ResponseWriter) <-chan bool {
 	return doneCh
 }
 
+// 对象上传完成
 // CompleteMultipartUploadHandler - Complete multipart upload.
 func (api objectAPIHandlers) CompleteMultipartUploadHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := newContext(r, w, "CompleteMultipartUpload")

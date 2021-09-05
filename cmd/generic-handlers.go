@@ -105,6 +105,7 @@ const (
 
 // ServeHTTP fails if the request contains at least one reserved header which
 // would be treated as metadata.
+// TODO
 func filterReservedMetadata(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if containsReservedMetadata(r.Header) {
@@ -521,6 +522,7 @@ func addSecurityHeaders(h http.Handler) http.Handler {
 // `panic(logger.ErrCritical)` as done by `logger.CriticalIf`.
 //
 // It should be always the first / highest HTTP handler.
+// 优先级最高的http handler
 type criticalErrorHandler struct{ handler http.Handler }
 
 func (h criticalErrorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
